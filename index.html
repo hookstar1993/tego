@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEGO Agreefood Industries - Taaze Phal, Aapke Ghar Tak</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        // Apply theme from localStorage on page load to prevent FOUC (Flash of Unstyled Content)
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background-color: #e5e7eb; } /* gray-200 */
+        ::-webkit-scrollbar-thumb { background-color: #4ade80; border-radius: 10px; } /* green-400 */
+        ::-webkit-scrollbar-thumb:hover { background-color: #22c55e; } /* green-600 */
+
+        html.dark ::-webkit-scrollbar-track { background-color: #374151; } /* gray-700 */
+        
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            height: 20px;
+            width: 20px;
+            font-size: 12px;
+        }
+        /* Animation for modal */
+        .modal-enter { opacity: 0; transform: scale(0.95); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: all 300ms ease-out; }
+        .modal-leave-active { opacity: 0; transform: scale(0.95); transition: all 300ms ease-in; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-200 transition-colors duration-300">
+
+    <!-- Header Section -->
+    <header class="bg-white/80 dark:bg-gray-800/80 shadow-lg sticky top-0 z-40 backdrop-blur-sm">
+        <div class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-green-600 dark:text-green-400">
+                <i class="fas fa-leaf mr-2"></i>TEGO
+            </h1>
+            <!-- Search Bar -->
+            <div class="hidden sm:flex flex-grow max-w-xl mx-4">
+                <input id="search-input" type="text" data-lang-placeholder="searchPlaceholder" class="w-full px-4 py-2 text-gray-700 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-2 border-transparent rounded-l-lg focus:outline-none focus:border-green-500 transition-colors">
+                <button class="bg-green-500 text-white px-4 rounded-r-lg hover:bg-green-600">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div id="panel-switcher" class="flex items-center space-x-1 rounded-full bg-gray-100 dark:bg-gray-700 p-1">
+                    <button id="customer-btn" class="px-3 py-1 text-xs font-bold text-white bg-green-500 rounded-full shadow-md transition-all duration-300" data-lang-key="customer">Customer</button>
+                    <button id="seller-btn" class="px-3 py-1 text-xs font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-all duration-300" data-lang-key="seller">Seller</button>
+                </div>
+                 <div id="language-switcher" class="flex items-center space-x-1 rounded-full bg-gray-100 dark:bg-gray-700 p-1">
+                    <button id="lang-en-btn" class="px-3 py-1 text-xs font-bold rounded-full transition-all duration-300">EN</button>
+                    <button id="lang-gu-btn" class="px-3 py-1 text-xs font-bold rounded-full transition-all duration-300">GU</button>
+                </div>
+                <button id="cart-btn" class="relative text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                    <i class="fas fa-shopping-cart fa-lg"></i>
+                    <span id="cart-badge" class="cart-badge flex items-center justify-center rounded-full bg-red-500 text-white font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 py-8">
+        <!-- Customer Panel -->
+        <div id="customer-panel">
+            <div class="text-center mb-10">
+                <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight" data-lang-key="heroTitle"></h2>
+                <p class="mt-2 text-lg text-gray-500 dark:text-gray-400" data-lang-key="heroSubtitle"></p>
+            </div>
+            <div id="fruit-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                <!-- Products will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <!-- Seller Panel -->
+        <div id="seller-panel" class="hidden">
+             <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
+                <!-- Add/Edit Product Form -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl">
+                    <h3 id="form-title" class="text-3xl font-bold mb-6 text-gray-800 dark:text-white text-center" data-lang-key="addNewProduct"></h3>
+                    <form id="product-form" class="space-y-4">
+                        <input type="hidden" id="edit-mode-id" name="editModeId" value="">
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="fruitNameEn" class="block text-sm font-medium text-gray-700 dark:text-gray-300" data-lang-key="productNameEnLabel"></label>
+                                <input type="text" id="fruitNameEn" name="fruitNameEn" required class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                            </div>
+                            <div>
+                                <label for="fruitNameGu" class="block text-sm font-medium text-gray-700 dark:text-gray-300" data-lang-key="productNameGuLabel"></label>
+                                <input type="text" id="fruitNameGu" name="fruitNameGu" required class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="fruitDescriptionEn" class="block text-sm font-medium text-gray-700 dark:text-gray-300" data-lang-key="descriptionEnLabel"></label>
+                                <textarea id="fruitDescriptionEn" name="fruitDescriptionEn" rows="3" required class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"></textarea>
+                            </div>
+                            <div>
+                                <label for="fruitDescriptionGu" class="block text-sm font-medium text-gray-700 dark:text-gray-300" data-lang-key="descriptionGuLabel"></label>
+                                <textarea id="fruitDescriptionGu" name="fruitDescriptionGu" rows="3" required class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"></textarea>
+                            </div>
+                        </div>
+
+                         <div>
+                            <label for="fruitCategory" class="block text-sm font-medium text-gray-700 dark:text-gray-300" data-lang-key="categoryLabel"></label>
+                            <select id="fruitCategory" name="fruitCategory" class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                                <option value="Fruit" data-lang-key="categoryFruit"></option>
+                                <option value="Vegetable" data-lang-key="categoryVegetable"></option>
+                                <option value="Grains" data-lang-key="categoryGrains"></option>
+                                <option value="Other" data-lang-key="categoryOther"></option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="fruitPrice" class="block text-sm font-medium text-gray-700 dark:text-gray-300" data-lang-key="priceLabel"></label>
+                                <input type="number" id="fruitPrice" name="fruitPrice" min="0" step="0.01" required class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                            </div>
+                            <div>
+                               <label for="fruitUnit" class="block text-sm font-medium text-gray-700 dark:text-gray-300" data-lang-key="unitLabel"></label>
+                                <select id="fruitUnit" name="fruitUnit" class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                                    <option value="kg" data-lang-key="unitKg"></option>
+                                    <option value="20 kgs" data-lang-key="unit20Kgs"></option>
+                                    <option value="dozen" data-lang-key="unitDozen"></option>
+                                </select>
+                            </div>
+                        </div>
+                         <div>
+                            <label for="fruitStock" class="block text-sm font-medium text-gray-700 dark:text-gray-300" data-lang-key="stockLabel"></label>
+                            <input type="number" id="fruitStock" name="fruitStock" min="0" required class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        </div>
+                        <div>
+                            <label for="fruitImage" class="block text-sm font-medium text-gray-700 dark:text-gray-300" data-lang-key="imageLabel"></label>
+                            <input type="url" id="fruitImage" name="fruitImage" placeholder="https://example.com/image.jpg" required class="mt-1 block w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                        </div>
+                        <div id="form-buttons" class="space-y-2 sm:space-y-0 sm:flex sm:space-x-2">
+                             <button type="submit" id="submit-form-btn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-lg text-lg font-semibold text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-transform transform hover:scale-105">
+                                <i id="submit-btn-icon" class="fas fa-plus-circle mr-2"></i><span id="submit-btn-text" data-lang-key="addProductBtn"></span>
+                            </button>
+                             <button type="button" id="cancel-edit-btn" class="w-full flex justify-center py-3 px-4 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm text-lg font-semibold bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 hidden">
+                                <i class="fas fa-times mr-2"></i><span data-lang-key="cancelEdit"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <!-- Listed Products -->
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl">
+                    <h3 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white text-center" data-lang-key="yourListedProducts"></h3>
+                    <div id="seller-fruit-list" class="space-y-4 max-h-[450px] overflow-y-auto pr-2">
+                        <!-- Seller's products will be here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Shopping Cart Modal -->
+    <div id="cart-modal-container" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
+        <div id="cart-modal" class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg mx-auto modal-enter">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white"><i class="fas fa-shopping-cart mr-3 text-green-500"></i><span data-lang-key="yourCart"></span></h3>
+                <button id="close-cart-btn" class="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors text-2xl">&times;</button>
+            </div>
+            <div id="cart-items" class="p-6 max-h-[50vh] overflow-y-auto">
+                <!-- Cart items will be here -->
+            </div>
+            <div class="p-6 bg-gray-50 dark:bg-gray-900/50 rounded-b-2xl">
+                <div class="flex justify-between items-center text-xl font-bold">
+                    <span data-lang-key="totalAmount"></span>
+                    <span id="cart-total" class="text-green-600 dark:text-green-400">₹0.00</span>
+                </div>
+                <button class="w-full mt-4 py-3 px-4 rounded-lg shadow-lg text-lg font-semibold text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 transition-transform transform hover:scale-105">
+                    <span data-lang-key="checkout"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div id="product-detail-modal-container" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4">
+        <div id="product-detail-modal" class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl mx-auto modal-enter max-h-[90vh] overflow-y-auto relative">
+            <!-- Content will be injected by JS -->
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 dark:bg-black/50 text-white mt-12">
+        <div class="container mx-auto px-6 py-4 text-center">
+            <p data-lang-key="footerText"></p>
+        </div>
+    </footer>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 left-5 md:left-auto md:right-5 bg-gray-900 text-white py-3 px-6 rounded-lg shadow-xl opacity-0 translate-y-10 transition-all duration-500 ease-in-out z-50">
+        <p id="toast-message">Notification</p>
+    </div>
+
+    <!-- Floating Action Button for Theme Toggle -->
+    <div class="fixed bottom-5 right-5 z-50">
+        <button id="theme-toggle-btn" class="h-14 w-14 bg-gray-800 dark:bg-white text-white dark:text-gray-800 rounded-full shadow-lg flex items-center justify-center text-xl hover:bg-gray-900 dark:hover:bg-gray-200 transition-transform transform hover:scale-110 focus:outline-none">
+            <i id="theme-icon" class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const customerBtn = document.getElementById('customer-btn');
+        const sellerBtn = document.getElementById('seller-btn');
+        const customerPanel = document.getElementById('customer-panel');
+        const sellerPanel = document.getElementById('seller-panel');
+        const fruitListContainer = document.getElementById('fruit-list');
+        const productForm = document.getElementById('product-form');
+        const sellerFruitListContainer = document.getElementById('seller-fruit-list');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        const searchInput = document.getElementById('search-input');
+        const cartBtn = document.getElementById('cart-btn');
+        const cartBadge = document.getElementById('cart-badge');
+        const cartModalContainer = document.getElementById('cart-modal-container');
+        const cartModal = document.getElementById('cart-modal');
+        const closeCartBtn = document.getElementById('close-cart-btn');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotalEl = document.getElementById('cart-total');
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const themeIcon = document.getElementById('theme-icon');
+        const langEnBtn = document.getElementById('lang-en-btn');
+        const langGuBtn = document.getElementById('lang-gu-btn');
+        const productDetailModalContainer = document.getElementById('product-detail-modal-container');
+        const productDetailModal = document.getElementById('product-detail-modal');
+        const editModeIdInput = document.getElementById('edit-mode-id');
+        const formTitle = document.getElementById('form-title');
+        const submitBtnText = document.getElementById('submit-btn-text');
+        const submitBtnIcon = document.getElementById('submit-btn-icon');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        
+        // --- Translations ---
+        const translations = {
+            en: {
+                // Header & Panels
+                customer: 'Customer',
+                seller: 'Seller',
+                searchPlaceholder: 'Search for products...',
+                heroTitle: 'Straight From The Farm, To Your Home',
+                heroSubtitle: 'Choose your favorite products and place your order.',
+                // Seller Form
+                addNewProduct: 'Add New Product',
+                editProduct: 'Edit Product',
+                productNameEnLabel: 'Product Name (English)',
+                productNameGuLabel: 'Product Name (Gujarati)',
+                descriptionEnLabel: 'Description (English)',
+                descriptionGuLabel: 'Description (Gujarati)',
+                categoryLabel: 'Category',
+                categoryFruit: 'Fruit',
+                categoryVegetable: 'Vegetable',
+                categoryGrains: 'Grains',
+                categoryOther: 'Other',
+                priceLabel: 'Price',
+                unitLabel: 'Selling Unit',
+                unitKg: 'per Kg',
+                unit20Kgs: 'per 20 Kgs',
+                unitDozen: 'per Dozen',
+                stockLabel: 'Available Stock',
+                imageLabel: 'Product Image URL',
+                addProductBtn: 'Add Product',
+                updateProductBtn: 'Update Product',
+                cancelEdit: 'Cancel',
+                yourListedProducts: 'Your Listed Products',
+                // Cart
+                yourCart: 'Your Cart',
+                totalAmount: 'Total Amount:',
+                checkout: 'Checkout',
+                // Toasts & Messages
+                addedToCart: 'added to cart!',
+                productAdded: 'successfully added!',
+                productUpdated: 'successfully updated!',
+                productDeleted: 'has been deleted.',
+                maxStock: 'Max stock limit reached for',
+                outOfStock: 'is out of stock.',
+                noProductsFound: 'No products found with this name.',
+                emptySellerList: 'You have not added any products yet.',
+                emptyCart: 'Your cart is empty.',
+                // Footer
+                footerText: '© 2025 TEGO Agreefood Industries. All Rights Reserved.',
+                // Product Card & Detail
+                addToCartBtn: 'Add to Cart',
+                stock: 'Stock',
+                outOfStockBadge: 'OUT OF STOCK',
+                availability: 'Availability',
+                inStock: 'In Stock',
+                productDescription: 'Product Description'
+            },
+            gu: {
+                // Header & Panels
+                customer: 'ગ્રાહક',
+                seller: 'વિક્રેતા',
+                searchPlaceholder: 'ઉત્પાદનો શોધો...',
+                heroTitle: 'સીધા ખેતરથી, તમારા ઘર સુધી',
+                heroSubtitle: 'તમારા મનપસંદ ઉત્પાદનો પસંદ કરો અને ઓર્ડર કરો.',
+                // Seller Form
+                addNewProduct: 'નવું ઉત્પાદન ઉમેરો',
+                editProduct: 'ઉત્પાદન સંપાદિત કરો',
+                productNameEnLabel: 'ઉત્પાદનનું નામ (અંગ્રેજી)',
+                productNameGuLabel: 'ઉત્પાદનનું નામ (ગુજરાતી)',
+                descriptionEnLabel: 'વર્ણન (અંગ્રેજી)',
+                descriptionGuLabel: 'વર્ણન (ગુજરાતી)',
+                categoryLabel: 'કેટેગરી',
+                categoryFruit: 'ફળ',
+                categoryVegetable: 'શાકભાજી',
+                categoryGrains: 'અનાજ',
+                categoryOther: 'અન્ય',
+                priceLabel: 'કિંમત',
+                unitLabel: 'વેચાણ એકમ',
+                unitKg: 'પ્રતિ કિલો',
+                unit20Kgs: 'પ્રતિ ૨૦ કિલો',
+                unitDozen: 'પ્રતિ ડઝન',
+                stockLabel: 'ઉપલબ્ધ સ્ટોક',
+                imageLabel: 'ઉત્પાદન ઇમેજ URL',
+                addProductBtn: 'ઉત્પાદન ઉમેરો',
+                updateProductBtn: 'ઉત્પાદન અપડેટ કરો',
+                cancelEdit: 'રદ કરો',
+                yourListedProducts: 'તમારા લિસ્ટેડ ઉત્પાદનો',
+                // Cart
+                yourCart: 'તમારું કાર્ટ',
+                totalAmount: 'કુલ રકમ:',
+                checkout: 'ચેકઆઉટ કરો',
+                // Toasts & Messages
+                addedToCart: 'કાર્ટમાં ઉમેરાઈ ગયું!',
+                productAdded: 'સફળતાપૂર્વક ઉમેરાઈ ગયું!',
+                productUpdated: 'સફળતાપૂર્વક અપડેટ થયું!',
+                productDeleted: 'ડિલીટ કરી દેવાયું છે.',
+                maxStock: 'માટે મહત્તમ સ્ટોક મર્યાદા પર પહોંચી ગયા છો',
+                outOfStock: 'સ્ટોકની બહાર છે.',
+                noProductsFound: 'આ નામનું કોઈ ઉત્પાદન મળ્યું નથી.',
+                emptySellerList: 'તમે હજી સુધી કોઈ ઉત્પાદનો ઉમેર્યા નથી.',
+                emptyCart: 'તમારું કાર્ટ ખાલી છે.',
+                // Footer
+                footerText: '© ૨૦૨૫ ટેગો એગ્રીફૂડ ઇન્ડસ્ટ્રીઝ. સર્વાધિકાર સુરક્ષિત.',
+                 // Product Card & Detail
+                addToCartBtn: 'કાર્ટમાં ઉમેરો',
+                stock: 'સ્ટોક',
+                outOfStockBadge: 'સ્ટોક નથી',
+                availability: 'ઉપલબ્ધતા',
+                inStock: 'સ્ટોકમાં છે',
+                productDescription: 'ઉત્પાદન વર્ણન'
+            }
+        };
+
+        // --- State (Database ki jagah) ---
+        let currentLang = localStorage.getItem('language') || 'en';
+        let fruits = [
+            { id: 1, name: { en: 'Kashmiri Apple', gu: 'કાશ્મીરી સફરજન' }, price: 3400, image: 'https://placehold.co/600x400/f87171/ffffff?text=Apple', unit: '20 kgs', category: 'Fruit', stock: 50, description: { en: 'Crispy, juicy, and sweet apples directly from the orchards of Kashmir. They are known for their vibrant red color and are packed with vitamins and fiber.', gu: 'કાશ્મીરના બગીચાઓમાંથી સીધા ક્રિસ્પી, રસદાર અને મીઠા સફરજન. તેઓ તેમના વાઇબ્રન્ટ લાલ રંગ માટે જાણીતા છે અને વિટામિન્સ અને ફાઇબરથી ભરપૂર છે.' } },
+            { id: 2, name: { en: 'Robusta Banana', gu: 'રોબસ્ટા કેળા' }, price: 60, image: 'https://placehold.co/600x400/facc15/ffffff?text=Banana', unit: 'dozen', category: 'Fruit', stock: 150, description: { en: 'High-energy Robusta bananas, perfect for a healthy snack. They are a great source of potassium and help in maintaining blood pressure.', gu: 'ઉચ્ચ-ઊર્જાવાળા રોબસ્ટા કેળા, તંદુરસ્ત નાસ્તા માટે યોગ્ય. તે પોટેશિયમનો ઉત્તમ સ્ત્રોત છે અને બ્લડ પ્રેશર જાળવવામાં મદદ કરે છે.' } },
+            { id: 3, name: { en: 'Nagpuri Orange', gu: 'નાગપુરી નારંગી' }, price: 90, image: 'https://placehold.co/600x400/fb923c/ffffff?text=Orange', unit: 'kg', category: 'Fruit', stock: 80, description: { en: 'Famous Nagpur oranges, full of Vitamin C and tangy flavor. Excellent for boosting immunity and skin health.', gu: 'પ્રખ્યાત નાગપુર નારંગી, વિટામિન સી અને ખાટા સ્વાદથી ભરપૂર. રોગપ્રતિકારક શક્તિ અને ત્વચાના સ્વાસ્થ્યને વધારવા માટે ઉત્તમ.' } },
+            { id: 4, name: { en: 'Gehu (Wheat)', gu: 'ઘઉં' }, price: 550, image: 'https://placehold.co/600x400/f59e0b/ffffff?text=Wheat', unit: '20 kgs', category: 'Grains', stock: 200, description: { en: 'High-quality whole wheat grains for making soft rotis. A staple food item rich in dietary fiber and essential nutrients.', gu: 'નરમ રોટલી બનાવવા માટે ઉચ્ચ-ગુણવત્તાવાળા આખા ઘઉંના દાણા. ડાયેટરી ફાઇબર અને આવશ્યક પોષક તત્વોથી સમૃદ્ધ મુખ્ય ખોરાક.' } },
+            { id: 5, name: { en: 'Pomegranate', gu: 'દાડમ' }, price: 160, image: 'https://placehold.co/600x400/ef4444/ffffff?text=Pomegranate', unit: 'kg', category: 'Fruit', stock: 0, description: { en: 'Bright red pomegranates, packed with antioxidants. Known for their anti-inflammatory properties and benefits for heart health.', gu: 'એન્ટીઑકિસડન્ટથી ભરપૂર તેજસ્વી લાલ દાડમ. તેમની બળતરા વિરોધી ગુણધર્મો અને હૃદયના સ્વાસ્થ્ય માટેના ફાયદા માટે જાણીતા છે.' } },
+        ];
+        let cart = [];
+
+        // --- Functions ---
+        function updateLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('language', lang);
+            
+            // Handle button active state
+            if (lang === 'en') {
+                langEnBtn.classList.add('bg-green-500', 'text-white', 'shadow-md');
+                langEnBtn.classList.remove('text-gray-600', 'dark:text-gray-300');
+                langGuBtn.classList.remove('bg-green-500', 'text-white', 'shadow-md');
+                langGuBtn.classList.add('text-gray-600', 'dark:text-gray-300');
+            } else {
+                langGuBtn.classList.add('bg-green-500', 'text-white', 'shadow-md');
+                langGuBtn.classList.remove('text-gray-600', 'dark:text-gray-300');
+                langEnBtn.classList.remove('bg-green-500', 'text-white', 'shadow-md');
+                langEnBtn.classList.add('text-gray-600', 'dark:text-gray-300');
+            }
+
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-key');
+                if (translations[lang][key]) {
+                    el.innerText = translations[lang][key];
+                }
+            });
+
+             document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-lang-placeholder');
+                 if (translations[lang][key]) {
+                    el.placeholder = translations[lang][key];
+                }
+            });
+            
+            // If in edit mode, update form texts
+            if (editModeIdInput.value) {
+                formTitle.innerText = translations[currentLang].editProduct;
+                submitBtnText.innerText = translations[currentLang].updateProductBtn;
+            } else {
+                 formTitle.innerText = translations[currentLang].addNewProduct;
+                submitBtnText.innerText = translations[currentLang].addProductBtn;
+            }
+
+            renderFruits(searchInput.value);
+            renderSellerProducts();
+            renderCartItems();
+        }
+
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.replace('opacity-0', 'opacity-100');
+            toast.classList.replace('translate-y-10', 'translate-y-0');
+            setTimeout(() => {
+                toast.classList.replace('opacity-100', 'opacity-0');
+                toast.classList.replace('translate-y-0', 'translate-y-10');
+            }, 3000);
+        }
+
+        function renderFruits(filter = '') {
+            fruitListContainer.innerHTML = '';
+            const filteredFruits = fruits.filter(f => f.name.en.toLowerCase().includes(filter.toLowerCase()) || f.name.gu.toLowerCase().includes(filter.toLowerCase()));
+
+            if (filteredFruits.length === 0) {
+                 fruitListContainer.innerHTML = `<p class="text-center col-span-full text-gray-500 dark:text-gray-400 text-xl py-10">${translations[currentLang].noProductsFound}</p>`;
+                 return;
+            }
+
+            filteredFruits.forEach(fruit => {
+                const isOutOfStock = fruit.stock <= 0;
+                const fruitCard = document.createElement('div');
+                fruitCard.className = 'product-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden group flex flex-col transition-all duration-300 ease-in-out';
+                fruitCard.dataset.fruitId = fruit.id;
+                fruitCard.innerHTML = `
+                    <div class="relative cursor-pointer" data-action="open-detail">
+                        <img src="${fruit.image}" alt="${fruit.name[currentLang]}" class="w-full h-56 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Error';">
+                        <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-all duration-300"></div>
+                        <span class="absolute top-3 left-3 bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full">${translations[currentLang]['category' + fruit.category]}</span>
+                        ${isOutOfStock ? 
+                            `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">${translations[currentLang].outOfStockBadge}</span>` :
+                            `<span class="absolute top-3 right-3 bg-blue-500 text-white text-xs font-semibold px-3 py-1 rounded-full">${translations[currentLang].stock}: ${fruit.stock}</span>`
+                        }
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white truncate cursor-pointer" data-action="open-detail">${fruit.name[currentLang]}</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1 h-10 overflow-hidden cursor-pointer" data-action="open-detail">${fruit.description[currentLang]}</p>
+                        <div class="mt-4 flex-grow">
+                             <p class="text-green-600 dark:text-green-400 font-semibold text-2xl">₹${fruit.price}<span class="text-sm text-gray-500 dark:text-gray-400 font-normal"> / ${translations[currentLang]['unit' + fruit.unit.replace(/\s/g, '')] || fruit.unit}</span></p>
+                        </div>
+                        <button data-fruit-id="${fruit.id}" class="add-to-cart-btn-small w-full mt-4 py-2 px-4 rounded-lg font-semibold text-white bg-green-500 hover:bg-green-600 transition-colors ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}" ${isOutOfStock ? 'disabled' : ''}>
+                            <i class="fas fa-shopping-basket mr-2"></i>${translations[currentLang].addToCartBtn}
+                        </button>
+                    </div>
+                `;
+                fruitListContainer.appendChild(fruitCard);
+            });
+        }
+        
+        function renderSellerProducts() {
+            sellerFruitListContainer.innerHTML = '';
+             if (fruits.length === 0) {
+                 sellerFruitListContainer.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400">${translations[currentLang].emptySellerList}</p>`;
+                 return;
+            }
+            fruits.forEach(fruit => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-3 rounded-lg';
+                item.innerHTML = `
+                    <div class="flex items-center">
+                        <img src="${fruit.image}" class="w-12 h-12 rounded-md object-cover mr-4">
+                        <div>
+                            <p class="font-semibold">${fruit.name[currentLang]} <span class="text-xs text-gray-500 dark:text-gray-400">(${translations[currentLang]['category' + fruit.category]})</span></p>
+                            <p class="text-sm text-green-600 dark:text-green-400 font-bold">₹${fruit.price} / ${translations[currentLang]['unit' + fruit.unit.replace(/\s/g, '')] || fruit.unit}</p>
+                            <p class="text-xs font-bold ${fruit.stock > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'}">${translations[currentLang].stock}: ${fruit.stock}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button data-fruit-id="${fruit.id}" class="edit-fruit-btn text-blue-500 hover:text-blue-700 transition-colors p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/50">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button data-fruit-id="${fruit.id}" class="delete-fruit-btn text-red-500 hover:text-red-700 transition-colors p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/50">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+                sellerFruitListContainer.appendChild(item);
+            });
+        }
+        
+        function addToCart(fruitId) {
+            const fruit = fruits.find(f => f.id == fruitId);
+            const existingItem = cart.find(item => item.id == fruitId);
+
+            if (existingItem) {
+                 if(existingItem.quantity >= fruit.stock) {
+                    showToast(`${translations[currentLang].maxStock} ${fruit.name[currentLang]}`);
+                    return;
+                }
+                existingItem.quantity++;
+            } else {
+                 if(fruit.stock <= 0) {
+                    showToast(`${fruit.name[currentLang]} ${translations[currentLang].outOfStock}`);
+                    return;
+                }
+                cart.push({ ...fruit, quantity: 1 });
+            }
+            updateCart();
+            showToast(`${fruit.name[currentLang]} ${translations[currentLang].addedToCart}`);
+        }
+
+        function updateCart() {
+            renderCartItems();
+            updateCartTotal();
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartBadge.textContent = totalItems;
+        }
+
+        function renderCartItems() {
+            cartItemsContainer.innerHTML = '';
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400 py-8">${translations[currentLang].emptyCart}</p>`;
+                return;
+            }
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'flex items-center justify-between py-4 border-b last:border-b-0 border-gray-200 dark:border-gray-700';
+                cartItem.innerHTML = `
+                    <div class="flex items-center">
+                        <img src="${item.image}" class="w-16 h-16 rounded-lg object-cover mr-4">
+                        <div>
+                            <p class="font-semibold">${item.name[currentLang]}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">₹${item.price} / ${translations[currentLang]['unit' + item.unit.replace(/\s/g, '')] || item.unit}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                         <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
+                            <button data-fruit-id="${item.id}" class="change-quantity-btn dec-btn px-2 py-1 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">-</button>
+                            <span class="px-3">${item.quantity}</span>
+                            <button data-fruit-id="${item.id}" data-stock="${item.stock}" class="change-quantity-btn inc-btn px-2 py-1 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">+</button>
+                         </div>
+                         <button data-fruit-id="${item.id}" class="remove-from-cart-btn text-gray-400 hover:text-red-500"><i class="fas fa-times-circle"></i></button>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+        }
+
+        function updateCartTotal() {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartTotalEl.textContent = `₹${total.toFixed(2)}`;
+        }
+
+        function changeQuantity(fruitId, change, stockLimit = Infinity) {
+            const cartItem = cart.find(item => item.id == fruitId);
+            if (cartItem) {
+                if (change > 0 && cartItem.quantity >= stockLimit) {
+                    showToast(`${translations[currentLang].maxStock} ${cartItem.name[currentLang]}`);
+                    return;
+                }
+                cartItem.quantity += change;
+                if (cartItem.quantity <= 0) {
+                    cart = cart.filter(item => item.id != fruitId);
+                }
+            }
+            updateCart();
+        }
+
+        function removeFromCart(fruitId) {
+             cart = cart.filter(item => item.id != fruitId);
+             updateCart();
+        }
+
+        function switchPanel(panelToShow) {
+            if (panelToShow === 'customer') {
+                customerPanel.classList.remove('hidden');
+                sellerPanel.classList.add('hidden');
+                customerBtn.classList.add('bg-green-500', 'text-white', 'shadow-md');
+                customerBtn.classList.remove('text-gray-600', 'hover:bg-gray-200', 'dark:text-gray-300', 'dark:hover:bg-gray-600');
+                sellerBtn.classList.add('text-gray-600', 'hover:bg-gray-200', 'dark:text-gray-300', 'dark:hover:bg-gray-600');
+                sellerBtn.classList.remove('bg-green-500', 'text-white', 'shadow-md');
+            } else {
+                customerPanel.classList.add('hidden');
+                sellerPanel.classList.remove('hidden');
+                sellerBtn.classList.add('bg-green-500', 'text-white', 'shadow-md');
+                sellerBtn.classList.remove('text-gray-600', 'hover:bg-gray-200', 'dark:text-gray-300', 'dark:hover:bg-gray-600');
+                customerBtn.classList.add('text-gray-600', 'hover:bg-gray-200', 'dark:text-gray-300', 'dark:hover:bg-gray-600');
+                customerBtn.classList.remove('bg-green-500', 'text-white', 'shadow-md');
+            }
+        }
+        
+        function openCartModal() {
+            cartModalContainer.classList.remove('hidden');
+            cartModalContainer.classList.add('flex');
+            setTimeout(() => cartModal.classList.add('modal-enter-active'), 10);
+        }
+        
+        function closeCartModal() {
+            cartModal.classList.remove('modal-enter-active');
+            cartModal.classList.add('modal-leave-active');
+            setTimeout(() => {
+                cartModalContainer.classList.add('hidden');
+                cartModalContainer.classList.remove('flex');
+                cartModal.classList.remove('modal-leave-active');
+            }, 300);
+        }
+        
+        function openProductDetailModal(fruitId) {
+            const fruit = fruits.find(f => f.id == fruitId);
+            if (!fruit) return;
+
+            const isOutOfStock = fruit.stock <= 0;
+
+            productDetailModal.innerHTML = `
+                <button class="close-product-detail-btn absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors text-3xl z-10">&times;</button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
+                    <div>
+                        <img src="${fruit.image}" alt="${fruit.name[currentLang]}" class="w-full h-auto object-cover rounded-xl shadow-lg">
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 text-sm font-semibold px-3 py-1 rounded-full self-start">${translations[currentLang]['category' + fruit.category]}</span>
+                        <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white mt-4">${fruit.name[currentLang]}</h2>
+                        <p class="text-green-600 dark:text-green-400 font-semibold text-3xl mt-4">
+                            ₹${fruit.price}<span class="text-lg text-gray-500 dark:text-gray-400 font-normal"> / ${translations[currentLang]['unit' + fruit.unit.replace(/\s/g, '')] || fruit.unit}</span>
+                        </p>
+                        <div class="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <p class="font-semibold text-gray-700 dark:text-gray-300">${translations[currentLang].availability}: 
+                                <span class="${isOutOfStock ? 'text-red-500' : 'text-blue-500'}">${isOutOfStock ? translations[currentLang].outOfStockBadge : `${translations[currentLang].inStock} (${fruit.stock})`}</span>
+                            </p>
+                        </div>
+                        <div class="mt-4 flex-grow">
+                             <h4 class="text-lg font-bold mb-2">${translations[currentLang].productDescription}</h4>
+                             <p class="text-gray-600 dark:text-gray-400">${fruit.description[currentLang]}</p>
+                        </div>
+                        <button data-fruit-id="${fruit.id}" class="add-to-cart-btn-large w-full mt-6 py-4 px-4 rounded-lg shadow-lg text-lg font-semibold text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 transition-transform transform hover:scale-105 ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}" ${isOutOfStock ? 'disabled' : ''}>
+                             <i class="fas fa-shopping-basket mr-2"></i>${translations[currentLang].addToCartBtn}
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            productDetailModalContainer.classList.remove('hidden');
+            productDetailModalContainer.classList.add('flex');
+            setTimeout(() => productDetailModal.classList.add('modal-enter-active'), 10);
+        }
+
+        function closeProductDetailModal() {
+            productDetailModal.classList.remove('modal-enter-active');
+            productDetailModal.classList.add('modal-leave-active');
+            setTimeout(() => {
+                productDetailModalContainer.classList.add('hidden');
+                productDetailModalContainer.classList.remove('flex');
+                productDetailModal.classList.remove('modal-leave-active');
+            }, 300);
+        }
+
+        function applyTheme(theme) {
+             if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        function enterEditMode(fruitId) {
+            const fruitToEdit = fruits.find(f => f.id == fruitId);
+            if (!fruitToEdit) return;
+
+            productForm.fruitNameEn.value = fruitToEdit.name.en;
+            productForm.fruitNameGu.value = fruitToEdit.name.gu;
+            productForm.fruitDescriptionEn.value = fruitToEdit.description.en;
+            productForm.fruitDescriptionGu.value = fruitToEdit.description.gu;
+            productForm.fruitCategory.value = fruitToEdit.category;
+            productForm.fruitPrice.value = fruitToEdit.price;
+            productForm.fruitUnit.value = fruitToEdit.unit;
+            productForm.fruitStock.value = fruitToEdit.stock;
+            productForm.fruitImage.value = fruitToEdit.image;
+            editModeIdInput.value = fruitId;
+
+            formTitle.innerText = translations[currentLang].editProduct;
+            submitBtnText.innerText = translations[currentLang].updateProductBtn;
+            submitBtnIcon.classList.replace('fa-plus-circle', 'fa-save');
+            cancelEditBtn.classList.remove('hidden');
+            formTitle.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function exitEditMode() {
+            productForm.reset();
+            editModeIdInput.value = '';
+            formTitle.innerText = translations[currentLang].addNewProduct;
+            submitBtnText.innerText = translations[currentLang].addProductBtn;
+            submitBtnIcon.classList.replace('fa-save', 'fa-plus-circle');
+            cancelEditBtn.classList.add('hidden');
+        }
+
+
+        // --- Event Listeners ---
+        customerBtn.addEventListener('click', () => switchPanel('customer'));
+        sellerBtn.addEventListener('click', () => switchPanel('seller'));
+        searchInput.addEventListener('input', (e) => renderFruits(e.target.value));
+        langEnBtn.addEventListener('click', () => updateLanguage('en'));
+        langGuBtn.addEventListener('click', () => updateLanguage('gu'));
+
+        productForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const idToEdit = editModeIdInput.value;
+
+            const productData = {
+                name: { en: e.target.fruitNameEn.value, gu: e.target.fruitNameGu.value },
+                description: { en: e.target.fruitDescriptionEn.value, gu: e.target.fruitDescriptionGu.value },
+                category: e.target.fruitCategory.value,
+                price: parseFloat(e.target.fruitPrice.value),
+                unit: e.target.fruitUnit.value,
+                stock: parseInt(e.target.fruitStock.value),
+                image: e.target.fruitImage.value,
+            };
+
+            if (idToEdit) {
+                // Update existing fruit
+                const fruitIndex = fruits.findIndex(f => f.id == idToEdit);
+                if (fruitIndex > -1) {
+                    fruits[fruitIndex] = { ...fruits[fruitIndex], ...productData };
+                    showToast(`'${productData.name[currentLang]}' ${translations[currentLang].productUpdated}`);
+                }
+            } else {
+                // Add new fruit
+                const newFruit = { id: Date.now(), ...productData };
+                fruits.unshift(newFruit);
+                showToast(`'${newFruit.name[currentLang]}' ${translations[currentLang].productAdded}`);
+            }
+
+            renderFruits();
+            renderSellerProducts();
+            exitEditMode();
+        });
+
+        cancelEditBtn.addEventListener('click', exitEditMode);
+        
+        document.body.addEventListener('click', (e) => {
+            // Add to Cart from small button on card
+            const addToCartSmallBtn = e.target.closest('.add-to-cart-btn-small');
+            if(addToCartSmallBtn) {
+                addToCart(addToCartSmallBtn.dataset.fruitId);
+                return;
+            }
+            
+            // Add to Cart from large button in detail modal
+            const addToCartLargeBtn = e.target.closest('.add-to-cart-btn-large');
+            if(addToCartLargeBtn) {
+                addToCart(addToCartLargeBtn.dataset.fruitId);
+                return;
+            }
+            
+            // Open Product Detail Modal
+            const productCard = e.target.closest('.product-card');
+            if (productCard && e.target.closest('[data-action="open-detail"]')) {
+                 openProductDetailModal(productCard.dataset.fruitId);
+                 return;
+            }
+
+            // Edit product from seller panel
+            const editFruitBtn = e.target.closest('.edit-fruit-btn');
+            if (editFruitBtn) {
+                const fruitId = editFruitBtn.dataset.fruitId;
+                enterEditMode(fruitId);
+                return;
+            }
+
+            // Delete product from seller panel
+            const deleteFruitBtn = e.target.closest('.delete-fruit-btn');
+            if (deleteFruitBtn) {
+                const fruitId = deleteFruitBtn.dataset.fruitId;
+                const fruitToDelete = fruits.find(f => f.id == fruitId);
+                fruits = fruits.filter(f => f.id != fruitId);
+                renderFruits();
+                renderSellerProducts();
+                showToast(`${fruitToDelete.name[currentLang]} ${translations[currentLang].productDeleted}`);
+                return;
+            }
+
+            // Change quantity in cart
+            const changeQtyBtn = e.target.closest('.change-quantity-btn');
+            if(changeQtyBtn) {
+                const fruitId = changeQtyBtn.dataset.fruitId;
+                const stock = changeQtyBtn.dataset.stock;
+                const change = changeQtyBtn.classList.contains('inc-btn') ? 1 : -1;
+                changeQuantity(fruitId, change, stock);
+                return;
+            }
+            
+            // Remove item from cart
+            const removeItemBtn = e.target.closest('.remove-from-cart-btn');
+            if(removeItemBtn) {
+                removeFromCart(removeItemBtn.dataset.fruitId);
+                return;
+            }
+
+            // Close product detail modal
+             const closeProductDetail = e.target.closest('.close-product-detail-btn');
+             if(closeProductDetail) {
+                 closeProductDetailModal();
+                 return;
+             }
+        });
+        
+        cartBtn.addEventListener('click', openCartModal);
+        closeCartBtn.addEventListener('click', closeCartModal);
+        cartModalContainer.addEventListener('click', (e) => {
+            if (e.target === cartModalContainer) {
+                closeCartModal();
+            }
+        });
+        
+        productDetailModalContainer.addEventListener('click', (e) => {
+            if(e.target === productDetailModalContainer){
+                closeProductDetailModal();
+            }
+        });
+        
+        themeToggleBtn.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            applyTheme(isDark ? 'light' : 'dark');
+        });
+
+        // --- Initial Load ---
+        function initialize() {
+            // Theme setup
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            } else {
+                applyTheme(systemPrefersDark ? 'dark' : 'light');
+            }
+            
+            // Language setup
+            updateLanguage(currentLang);
+            
+            // Initial render
+            updateCartBadge();
+        }
+        
+        initialize();
+
+    </script>
+</body>
+</html>
+
