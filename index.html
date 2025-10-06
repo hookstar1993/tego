@@ -308,6 +308,8 @@
                 updateProductBtn: 'Update Product',
                 cancelEdit: 'Cancel',
                 yourListedProducts: 'Your Listed Products',
+                enterPassword: 'Enter seller password:',
+                incorrectPassword: 'Incorrect Password!',
                 // Cart
                 yourCart: 'Your Cart',
                 totalAmount: 'Total Amount:',
@@ -362,6 +364,8 @@
                 updateProductBtn: 'ઉત્પાદન અપડેટ કરો',
                 cancelEdit: 'રદ કરો',
                 yourListedProducts: 'તમારા લિસ્ટેડ ઉત્પાદનો',
+                enterPassword: 'વિક્રેતા પાસવર્ડ દાખલ કરો:',
+                incorrectPassword: 'ખોટો પાસવર્ડ!',
                 // Cart
                 yourCart: 'તમારું કાર્ટ',
                 totalAmount: 'કુલ રકમ:',
@@ -388,18 +392,35 @@
             }
         };
 
-        // --- State (Database ki jagah) ---
+        // --- State ---
         let currentLang = localStorage.getItem('language') || 'en';
-        let fruits = [
-            { id: 1, name: { en: 'Kashmiri Apple', gu: 'કાશ્મીરી સફરજન' }, price: 3400, image: 'https://placehold.co/600x400/f87171/ffffff?text=Apple', unit: '20 kgs', category: 'Fruit', stock: 50, description: { en: 'Crispy, juicy, and sweet apples directly from the orchards of Kashmir. They are known for their vibrant red color and are packed with vitamins and fiber.', gu: 'કાશ્મીરના બગીચાઓમાંથી સીધા ક્રિસ્પી, રસદાર અને મીઠા સફરજન. તેઓ તેમના વાઇબ્રન્ટ લાલ રંગ માટે જાણીતા છે અને વિટામિન્સ અને ફાઇબરથી ભરપૂર છે.' } },
-            { id: 2, name: { en: 'Robusta Banana', gu: 'રોબસ્ટા કેળા' }, price: 60, image: 'https://placehold.co/600x400/facc15/ffffff?text=Banana', unit: 'dozen', category: 'Fruit', stock: 150, description: { en: 'High-energy Robusta bananas, perfect for a healthy snack. They are a great source of potassium and help in maintaining blood pressure.', gu: 'ઉચ્ચ-ઊર્જાવાળા રોબસ્ટા કેળા, તંદુરસ્ત નાસ્તા માટે યોગ્ય. તે પોટેશિયમનો ઉત્તમ સ્ત્રોત છે અને બ્લડ પ્રેશર જાળવવામાં મદદ કરે છે.' } },
-            { id: 3, name: { en: 'Nagpuri Orange', gu: 'નાગપુરી નારંગી' }, price: 90, image: 'https://placehold.co/600x400/fb923c/ffffff?text=Orange', unit: 'kg', category: 'Fruit', stock: 80, description: { en: 'Famous Nagpur oranges, full of Vitamin C and tangy flavor. Excellent for boosting immunity and skin health.', gu: 'પ્રખ્યાત નાગપુર નારંગી, વિટામિન સી અને ખાટા સ્વાદથી ભરપૂર. રોગપ્રતિકારક શક્તિ અને ત્વચાના સ્વાસ્થ્યને વધારવા માટે ઉત્તમ.' } },
-            { id: 4, name: { en: 'Gehu (Wheat)', gu: 'ઘઉં' }, price: 550, image: 'https://placehold.co/600x400/f59e0b/ffffff?text=Wheat', unit: '20 kgs', category: 'Grains', stock: 200, description: { en: 'High-quality whole wheat grains for making soft rotis. A staple food item rich in dietary fiber and essential nutrients.', gu: 'નરમ રોટલી બનાવવા માટે ઉચ્ચ-ગુણવત્તાવાળા આખા ઘઉંના દાણા. ડાયેટરી ફાઇબર અને આવશ્યક પોષક તત્વોથી સમૃદ્ધ મુખ્ય ખોરાક.' } },
-            { id: 5, name: { en: 'Pomegranate', gu: 'દાડમ' }, price: 160, image: 'https://placehold.co/600x400/ef4444/ffffff?text=Pomegranate', unit: 'kg', category: 'Fruit', stock: 0, description: { en: 'Bright red pomegranates, packed with antioxidants. Known for their anti-inflammatory properties and benefits for heart health.', gu: 'એન્ટીઑકિસડન્ટથી ભરપૂર તેજસ્વી લાલ દાડમ. તેમની બળતરા વિરોધી ગુણધર્મો અને હૃદયના સ્વાસ્થ્ય માટેના ફાયદા માટે જાણીતા છે.' } },
-        ];
+        let fruits = []; // Data will be loaded from localStorage
         let cart = [];
 
-        // --- Functions ---
+        // --- LocalStorage Functions ---
+        function saveProductsToLocalStorage() {
+            localStorage.setItem('tego_products', JSON.stringify(fruits));
+        }
+
+        function loadProductsFromLocalStorage() {
+            const savedProducts = localStorage.getItem('tego_products');
+            if (savedProducts && JSON.parse(savedProducts).length > 0) {
+                fruits = JSON.parse(savedProducts);
+            } else {
+                // Default products if localStorage is empty
+                fruits = [
+                    { id: 6, name: { en: 'Dragon Fruit', gu: 'ડ્રેગન ફ્રૂટ' }, price: 110, image: 'https://growstar.in/wp-content/uploads/2023/08/51sylWPueZL._AC_UF10001000_QL80_-min.jpg', unit: 'kg', category: 'Fruit', stock: 100, description: { en: 'A tropical fruit with a unique look and taste, rich in antioxidants and vitamins.', gu: 'એન્ટીઑકિસડન્ટ અને વિટામિન્સથી ભરપૂર, અનન્ય દેખાવ અને સ્વાદ સાથેનું ઉષ્ણકટિબંધીય ફળ.' } },
+                    { id: 1, name: { en: 'Kashmiri Apple', gu: 'કાશ્મીરી સફરજન' }, price: 3400, image: 'https://placehold.co/600x400/f87171/ffffff?text=Apple', unit: '20 kgs', category: 'Fruit', stock: 50, description: { en: 'Crispy, juicy, and sweet apples directly from the orchards of Kashmir. They are known for their vibrant red color and are packed with vitamins and fiber.', gu: 'કાશ્મીરના બગીચાઓમાંથી સીધા ક્રિસ્પી, રસદાર અને મીઠા સફરજન. તેઓ તેમના વાઇબ્રન્ટ લાલ રંગ માટે જાણીતા છે અને વિટામિન્સ અને ફાઇબરથી ભરપૂર છે.' } },
+                    { id: 2, name: { en: 'Robusta Banana', gu: 'રોબસ્ટા કેળા' }, price: 60, image: 'https://placehold.co/600x400/facc15/ffffff?text=Banana', unit: 'dozen', category: 'Fruit', stock: 150, description: { en: 'High-energy Robusta bananas, perfect for a healthy snack. They are a great source of potassium and help in maintaining blood pressure.', gu: 'ઉચ્ચ-ઊર્જાવાળા રોબસ્ટા કેળા, તંદુરસ્ત નાસ્તા માટે યોગ્ય. તે પોટેશિયમનો ઉત્તમ સ્ત્રોત છે અને બ્લડ પ્રેશર જાળવવામાં મદદ કરે છે.' } },
+                    { id: 3, name: { en: 'Nagpuri Orange', gu: 'નાગપુરી નારંગી' }, price: 90, image: 'https://placehold.co/600x400/fb923c/ffffff?text=Orange', unit: 'kg', category: 'Fruit', stock: 80, description: { en: 'Famous Nagpur oranges, full of Vitamin C and tangy flavor. Excellent for boosting immunity and skin health.', gu: 'પ્રખ્યાત નાગપુર નારંગી, વિટામિન સી અને ખાટા સ્વાદથી ભરપૂર. રોગપ્રતિકારક શક્તિ અને ત્વચાના સ્વાસ્થ્યને વધારવા માટે ઉત્તમ.' } },
+                    { id: 4, name: { en: 'Gehu (Wheat)', gu: 'ઘઉં' }, price: 550, image: 'https://placehold.co/600x400/f59e0b/ffffff?text=Wheat', unit: '20 kgs', category: 'Grains', stock: 200, description: { en: 'High-quality whole wheat grains for making soft rotis. A staple food item rich in dietary fiber and essential nutrients.', gu: 'નરમ રોટલી બનાવવા માટે ઉચ્ચ-ગુણવત્તાવાળા આખા ઘઉંના દાણા. ડાયેટરી ફાઇબર અને આવશ્યક પોષક તત્વોથી સમૃદ્ધ મુખ્ય ખોરાક.' } },
+                    { id: 5, name: { en: 'Pomegranate', gu: 'દાડમ' }, price: 160, image: 'https://placehold.co/600x400/ef4444/ffffff?text=Pomegranate', unit: 'kg', category: 'Fruit', stock: 0, description: { en: 'Bright red pomegranates, packed with antioxidants. Known for their anti-inflammatory properties and benefits for heart health.', gu: 'એન્ટીઑકિસડન્ટથી ભરપૂર તેજસ્વી લાલ દાડમ. તેમની બળતરા વિરોધી ગુણધર્મો અને હૃદયના સ્વાસ્થ્ય માટેના ફાયદા માટે જાણીતા છે.' } },
+                ];
+                saveProductsToLocalStorage(); // Save the default products for next time
+            }
+        }
+
+        // --- General Functions ---
         function updateLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('language', lang);
@@ -743,7 +764,16 @@
 
         // --- Event Listeners ---
         customerBtn.addEventListener('click', () => switchPanel('customer'));
-        sellerBtn.addEventListener('click', () => switchPanel('seller'));
+        
+        sellerBtn.addEventListener('click', () => {
+            const password = prompt(translations[currentLang].enterPassword);
+            if (password === 'tego') {
+                switchPanel('seller');
+            } else if (password !== null) { // Avoids alert on 'cancel'
+                showToast(translations[currentLang].incorrectPassword);
+            }
+        });
+
         searchInput.addEventListener('input', (e) => renderFruits(e.target.value));
         langEnBtn.addEventListener('click', () => updateLanguage('en'));
         langGuBtn.addEventListener('click', () => updateLanguage('gu'));
@@ -775,7 +805,8 @@
                 fruits.unshift(newFruit);
                 showToast(`'${newFruit.name[currentLang]}' ${translations[currentLang].productAdded}`);
             }
-
+            
+            saveProductsToLocalStorage();
             renderFruits();
             renderSellerProducts();
             exitEditMode();
@@ -819,6 +850,7 @@
                 const fruitId = deleteFruitBtn.dataset.fruitId;
                 const fruitToDelete = fruits.find(f => f.id == fruitId);
                 fruits = fruits.filter(f => f.id != fruitId);
+                saveProductsToLocalStorage();
                 renderFruits();
                 renderSellerProducts();
                 showToast(`${fruitToDelete.name[currentLang]} ${translations[currentLang].productDeleted}`);
@@ -880,6 +912,9 @@
                 applyTheme(systemPrefersDark ? 'dark' : 'light');
             }
             
+            // Load products
+            loadProductsFromLocalStorage();
+
             // Language setup
             updateLanguage(currentLang);
             
@@ -892,4 +927,5 @@
     </script>
 </body>
 </html>
+
 
