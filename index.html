@@ -3,12 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEGO Agreefood Industries - Taaze Phal, Aapke Ghar Tak</title>
+    <title>TEGO Agreefood Industries - Fresh Fruits & Produce | Order Online</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Order fresh fruits, vegetables, and grains online from TEGO Agreefood Industries. Get farm-fresh produce delivered directly to your home. Shop now for the best quality and prices in Surat, Gujarat.">
+    <meta name="keywords" content="fresh fruits online, order vegetables, buy grains, Tego Agreefood, online grocery, farm fresh produce, Surat, Gujarat, online fruit delivery, કાશ્મીરી સફરજન, ઘઉં">
+    <meta name="author" content="TEGO Agreefood Industries">
+    <link rel="canonical" href="https://www.tegoagreefood.com">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.tegoagreefood.com">
+    <meta property="og:title" content="TEGO Agreefood Industries - Fresh Produce Delivered">
+    <meta property="og:description" content="Fresh fruits, vegetables, and grains delivered straight from the farm to your doorstep.">
+    <meta property="og:image" content="https://placehold.co/1200x630/22c55e/ffffff?text=TEGO+Agreefood+Industries">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.tegoagreefood.com">
+    <meta property="twitter:title" content="TEGO Agreefood Industries - Fresh Produce Delivered">
+    <meta property="twitter:description" content="Fresh fruits, vegetables, and grains delivered straight from the farm to your doorstep.">
+    <meta property="twitter:image" content="https://placehold.co/1200x630/22c55e/ffffff?text=TEGO+Agreefood+Industries">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -50,18 +71,20 @@
 
     <!-- Header Section -->
     <header class="bg-white/80 dark:bg-gray-800/80 shadow-lg sticky top-0 z-40 backdrop-blur-sm">
-        <div class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+        <div class="container mx-auto px-4 sm:px-6 py-4 flex flex-wrap justify-between items-center gap-y-2 sm:flex-nowrap">
             <h1 class="text-2xl sm:text-3xl font-extrabold text-green-600 dark:text-green-400">
                 <i class="fas fa-leaf mr-2"></i>TEGO
             </h1>
             <!-- Search Bar -->
-            <div class="hidden sm:flex flex-grow max-w-xl mx-4">
-                <input id="search-input" type="text" data-lang-placeholder="searchPlaceholder" class="w-full px-4 py-2 text-gray-700 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-2 border-transparent rounded-l-lg focus:outline-none focus:border-green-500 transition-colors">
-                <button class="bg-green-500 text-white px-4 rounded-r-lg hover:bg-green-600">
-                    <i class="fas fa-search"></i>
-                </button>
+            <div class="w-full sm:w-auto sm:flex-grow sm:max-w-xl sm:mx-4 order-last sm:order-none">
+                <div class="flex">
+                    <input id="search-input" type="text" data-lang-placeholder="searchPlaceholder" class="w-full px-4 py-2 text-gray-700 bg-gray-100 dark:bg-gray-700 dark:text-gray-200 border-2 border-transparent rounded-l-lg focus:outline-none focus:border-green-500 transition-colors">
+                    <button class="bg-green-500 text-white px-4 rounded-r-lg hover:bg-green-600">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2 sm:space-x-4">
                 <div id="panel-switcher" class="flex items-center space-x-1 rounded-full bg-gray-100 dark:bg-gray-700 p-1">
                     <button id="customer-btn" class="px-3 py-1 text-xs font-bold text-white bg-green-500 rounded-full shadow-md transition-all duration-300" data-lang-key="customer">Customer</button>
                     <button id="seller-btn" class="px-3 py-1 text-xs font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-all duration-300" data-lang-key="seller">Seller</button>
@@ -82,10 +105,10 @@
         <!-- Customer Panel -->
         <div id="customer-panel">
             <div class="text-center mb-10">
-                <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight" data-lang-key="heroTitle"></h2>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight" data-lang-key="heroTitle"></h2>
                 <p class="mt-2 text-lg text-gray-500 dark:text-gray-400" data-lang-key="heroSubtitle"></p>
             </div>
-            <div id="fruit-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div id="fruit-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8">
                 <!-- Products will be dynamically inserted here -->
             </div>
         </div>
@@ -94,8 +117,8 @@
         <div id="seller-panel" class="hidden">
              <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
                 <!-- Add/Edit Product Form -->
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl">
-                    <h3 id="form-title" class="text-3xl font-bold mb-6 text-gray-800 dark:text-white text-center" data-lang-key="addNewProduct"></h3>
+                <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-2xl">
+                    <h3 id="form-title" class="text-2xl md:text-3xl font-bold mb-6 text-gray-800 dark:text-white text-center" data-lang-key="addNewProduct"></h3>
                     <form id="product-form" class="space-y-4">
                         <input type="hidden" id="edit-mode-id" name="editModeId" value="">
                         
@@ -163,8 +186,8 @@
                     </form>
                 </div>
                 <!-- Listed Products -->
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl">
-                    <h3 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white text-center" data-lang-key="yourListedProducts"></h3>
+                <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-2xl">
+                    <h3 class="text-2xl md:text-3xl font-bold mb-6 text-gray-800 dark:text-white text-center" data-lang-key="yourListedProducts"></h3>
                     <div id="seller-fruit-list" class="space-y-4 max-h-[450px] overflow-y-auto pr-2">
                         <!-- Seller's products will be here -->
                     </div>
@@ -175,7 +198,7 @@
 
     <!-- Shopping Cart Modal -->
     <div id="cart-modal-container" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
-        <div id="cart-modal" class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg mx-auto modal-enter">
+        <div id="cart-modal" class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-11/12 sm:w-full sm:max-w-lg mx-auto modal-enter">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                 <h3 class="text-2xl font-bold text-gray-800 dark:text-white"><i class="fas fa-shopping-cart mr-3 text-green-500"></i><span data-lang-key="yourCart"></span></h3>
                 <button id="close-cart-btn" class="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors text-2xl">&times;</button>
@@ -197,7 +220,7 @@
 
     <!-- Product Detail Modal -->
     <div id="product-detail-modal-container" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4">
-        <div id="product-detail-modal" class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl mx-auto modal-enter max-h-[90vh] overflow-y-auto relative">
+        <div id="product-detail-modal" class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-11/12 sm:w-full sm:max-w-4xl mx-auto modal-enter max-h-[90vh] overflow-y-auto relative">
             <!-- Content will be injected by JS -->
         </div>
     </div>
@@ -211,7 +234,7 @@
     </footer>
     
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-5 left-5 md:left-auto md:right-5 bg-gray-900 text-white py-3 px-6 rounded-lg shadow-xl opacity-0 translate-y-10 transition-all duration-500 ease-in-out z-50">
+    <div id="toast" class="fixed bottom-5 left-5 right-5 sm:left-auto sm:w-auto sm:max-w-md bg-gray-900 text-white text-center sm:text-left py-3 px-6 rounded-lg shadow-xl opacity-0 translate-y-10 transition-all duration-500 ease-in-out z-50">
         <p id="toast-message">Notification</p>
     </div>
 
@@ -637,9 +660,9 @@
                     </div>
                     <div class="flex flex-col">
                         <span class="bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 text-sm font-semibold px-3 py-1 rounded-full self-start">${translations[currentLang]['category' + fruit.category]}</span>
-                        <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white mt-4">${fruit.name[currentLang]}</h2>
-                        <p class="text-green-600 dark:text-green-400 font-semibold text-3xl mt-4">
-                            ₹${fruit.price}<span class="text-lg text-gray-500 dark:text-gray-400 font-normal"> / ${translations[currentLang]['unit' + fruit.unit.replace(/\s/g, '')] || fruit.unit}</span>
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mt-4">${fruit.name[currentLang]}</h2>
+                        <p class="text-green-600 dark:text-green-400 font-semibold text-2xl md:text-3xl mt-4">
+                            ₹${fruit.price}<span class="text-base md:text-lg text-gray-500 dark:text-gray-400 font-normal"> / ${translations[currentLang]['unit' + fruit.unit.replace(/\s/g, '')] || fruit.unit}</span>
                         </p>
                         <div class="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                             <p class="font-semibold text-gray-700 dark:text-gray-300">${translations[currentLang].availability}: 
